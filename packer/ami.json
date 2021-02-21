@@ -1,0 +1,54 @@
+{
+    "variables" : {
+        "aws_profile": "default",
+        "ami_name": "amazon-linux-for-jenkins",
+        "ami_description" : "Amazon Linux Image with Jenkins Server",
+        "instance_type": "t2.small",
+        "region" : "us-west-1"
+        
+    },
+
+    "builders": [{
+        "type": "amazon-ebs",
+        "profile" : "{{user `aws_profile`}}",
+        "region" : "{{user `region`}}",
+        "instance_type" : "{{user `instance_type`}}",
+        "ena_support": "true",
+        "ssh_username" : "ec2-user",
+        "ami_name": "{{user `ami_name`}}-{{isotime | clean_resource_name}}",
+        "ami_description":"{{user `ami_description`}}",
+        "source_ami_filter": {
+            "filters": {
+              "virtualization-type": "hvm",
+              "name": "amzn2-ami-hvm-2.0*x86_64*",
+              "root-device-type": "ebs"
+            },
+            "owners": ["amazon"],
+            "most_recent": true
+        },
+        "tags": {
+            "Name": "{{user `ami_name`}}",
+            "Tool" : "Packer",
+            "Author" : "Philip Philip"
+          }
+    }],
+
+    "post-processors": [
+        {
+          "inline": [
+            "echo AMI Name {{user `ami_name`}}",
+            "date",
+            "exit 0"
+          ],
+          "type": "shell-local"
+        }
+      ],
+
+    "provisioners": [
+        {
+            "scripts": "setup.bash",
+            "type": "shell"
+        }
+    ]
+
+}

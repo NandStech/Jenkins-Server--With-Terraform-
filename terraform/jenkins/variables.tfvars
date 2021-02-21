@@ -1,0 +1,1 @@
+jenkins_admin_password = "hxqj_aC2DFb8Iv4H0NAOl5TI8as"
